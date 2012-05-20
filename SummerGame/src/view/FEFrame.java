@@ -32,7 +32,7 @@ public class FEFrame extends JFrame {
 	/**
 	 * Constructs a new Fire Emblem Frame.
 	 * 
-	 * A fire emblem frame is a jframe with support for things such as message
+	 * A fire emblem frame is a JFrame with support for things such as message
 	 * dialogs, battle, and etc
 	 */
 	public FEFrame() {
@@ -50,7 +50,7 @@ public class FEFrame extends JFrame {
 		mapPanel.setBackground(Color.BLUE);
 		battlePanel.setBackground(Color.RED);
 		textPanel.setVisible(false);
-		
+
 		// this code make the textbox advance on any keypress
 		textPanel.addKeyListener(new TextboxListener());
 
@@ -65,12 +65,14 @@ public class FEFrame extends JFrame {
 	}
 
 	/**
-	 * This method is not thread safe and should be wrapped inside an invoke
-	 * later thingy if called from another thread
+	 * Shows the message, broken up and everything. Not thread safe at the
+	 * moment, may change as the program grows.
+	 * 
+	 * @param message
+	 *            The message you want to display.
 	 */
 	public static void showTextbox(String message) {
-		textPanel
-				.setText(message);
+		textPanel.setText(message);
 		textPanel.setVisible(true);
 		textPanel.requestFocusInWindow();
 	}
@@ -79,26 +81,22 @@ public class FEFrame extends JFrame {
 		textPanel.setVisible(false);
 	}
 
+	// TODO: Change this to a better listener than "any key"
 	private static class TextboxListener implements KeyListener {
 
 		@Override
 		public void keyPressed(KeyEvent arg0) {
-			// TODO Auto-generated method stub
-
-	//		System.out.println("HELLO");
 		}
 
 		@Override
 		public void keyReleased(KeyEvent arg0) {
+			// if this method call is false, there is no more text to display
 			if (!textPanel.advanceText())
-				hideTextbox();
+				hideTextbox(); // thread safe because we are on EDT
 		}
 
 		@Override
 		public void keyTyped(KeyEvent arg0) {
-			// TODO Auto-generated method stub
-
-	//		System.out.println("HELLO");
 		}
 	}
 }
