@@ -11,6 +11,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class FEFrame extends JFrame {
 
@@ -65,16 +66,24 @@ public class FEFrame extends JFrame {
 	}
 
 	/**
-	 * Shows the message, broken up and everything. Not thread safe at the
-	 * moment, may change as the program grows.
+	 * Shows the message, broken up and everything. Is thread safe because it
+	 * checks to make sure you are on EDT. Efficient and doesn't make a thread
+	 * if it doesn't have to
 	 * 
 	 * @param message
 	 *            The message you want to display.
 	 */
-	public static void showTextbox(String message) {
-		textPanel.setText(message);
-		textPanel.setVisible(true);
-		textPanel.requestFocusInWindow();
+	public static void showTextbox(final String message) {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					textPanel.setText(message);
+					textPanel.setVisible(true);
+					textPanel.requestFocusInWindow();
+				}
+			});
+		}
 	}
 
 	private static void hideTextbox() {

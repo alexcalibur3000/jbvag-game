@@ -13,13 +13,22 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-public class Sprite {
+public class Sprite extends Drawable {
 
-	private static Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
+	protected static Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
 	private List<BufferedImage> theImages;
-	private int gifLength;
-	private int index;
+	protected int gifLength;
+	
+	protected int index;
+	private int row;
+	private int col;
 
+	protected Sprite() {
+		index = 0;
+		row = 0;
+		col = 0;
+	}
+	
 	/**
 	 * Argument should be a gif or you're gonna have a bad time
 	 * 
@@ -28,7 +37,7 @@ public class Sprite {
 	 */
 	public Sprite(String filename) {
 
-		index = 0;
+		this(); // initialize things using the other constructor
 
 		if (spriteMap.containsKey(filename)) {
 			this.theImages = spriteMap.get(filename).theImages;
@@ -63,7 +72,7 @@ public class Sprite {
 				System.err.println("Error loading .gif");
 				e.printStackTrace();
 			}
-			spriteMap.put(filename, new Sprite(filename));
+			spriteMap.put(filename, this);
 		}
 	}
 
@@ -85,6 +94,26 @@ public class Sprite {
 
 	public BufferedImage getCurrentImage() {
 		return theImages.get(index);
+	}
+
+	@Override
+	public int getRow() {
+		return row;
+	}
+
+	@Override
+	public int getCol() {
+		return col;
+	}
+
+	@Override
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	@Override
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 }
