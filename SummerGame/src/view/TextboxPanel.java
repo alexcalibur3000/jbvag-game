@@ -24,6 +24,8 @@ public class TextboxPanel extends JPanel {
 
 	public static final String FILENAME = "Resources" + StartGame.SEPARATOR
 			+ "textpanel_background.png";
+	
+	private static final int MAX_ROWS = 3; // TODO: Decide on max number of rows
 
 	private BufferedImage bgImage;
 	private final TextContainer box;
@@ -168,7 +170,7 @@ public class TextboxPanel extends JPanel {
 					if (c == ' ')
 						acceptableEndOffset = i;
 					dummyArea.append("" + c);
-					if (getLineCountAsSeen(dummyArea) > 3)
+					if (getLineCountAsSeen(dummyArea) > MAX_ROWS)
 						break;
 				}
 				if (i == s.length())
