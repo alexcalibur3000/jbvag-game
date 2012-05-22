@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public class Animator implements Iterable<Drawable> {
 	
-	// make a list of players instead I think
 	private final Map<UUID, Drawable> sprites;
 	
 	public Animator() {
@@ -18,6 +17,8 @@ public class Animator implements Iterable<Drawable> {
 	public void addSprite(Sprite sprite) {
 		sprites.put(sprite.getUUID(), sprite);
 	}
+	
+	// TODO: add alternate constructors
 
 	@Override
 	public Iterator<Drawable> iterator() {
@@ -36,7 +37,7 @@ public class Animator implements Iterable<Drawable> {
 	
 	public void drawAll(Graphics g) {
 		for(Drawable d : this) {
-			// insert drawing code here
+			// TODO: insert drawing code here
 		}
 	}
 }
