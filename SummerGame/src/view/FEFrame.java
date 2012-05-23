@@ -22,13 +22,13 @@ public class FEFrame extends JFrame {
 
 	// instance variables
 	private static final JLayeredPane lPane = new JLayeredPane();
-	private static final JPanel mapPanel = new JPanel(); // TODO: This should be
+	private static final GridPanel mapPanel = new GridPanel(); // TODO: This should be
 															// a custom JPanel
 															// later
 	private static final JPanel battlePanel = new JPanel(); // TODO: This should
 															// be a custom
 															// JPanel later
-	private static final TextboxPanel textPanel = new TextboxPanel(894, 122);
+	private static final TextboxPanel textPanel = new TextboxPanel(900, 150);
 
 	/**
 	 * Constructs a new Fire Emblem Frame.
@@ -37,25 +37,23 @@ public class FEFrame extends JFrame {
 	 * dialogs, battle, and etc
 	 */
 	public FEFrame() {
-		this.setPreferredSize(new Dimension(900, 700)); // TODO: Decide on a
+		this.getContentPane().setPreferredSize(new Dimension(900, 700)); // TODO: Decide on a
 														// size
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		// The dimensions of the content pane on windows is 894x672 with the
 		// 900x700 window size
-		mapPanel.setBounds(0, 0, 894, 672);
-		battlePanel.setBounds(97, 136, 700, 400);
+		mapPanel.setBounds(0, 0, 900, 700);
+		battlePanel.setBounds(100, 150, 700, 400);
 		textPanel.setBounds(0, 550, 900, 150);
 
 		mapPanel.setBackground(Color.BLUE);
 		battlePanel.setBackground(Color.RED);
 		textPanel.setVisible(false);
+		
 
-		// this code make the textbox advance on any keypress
-		textPanel.addKeyListener(new TextboxListener());
-
-		lPane.add(mapPanel, 0, new Integer(0));
+		lPane.add(mapPanel, new Integer(0));
 		lPane.add(battlePanel, new Integer(1));
 		lPane.add(textPanel, new Integer(2));
 
@@ -63,6 +61,8 @@ public class FEFrame extends JFrame {
 		this.setLayeredPane(lPane);
 		this.pack();
 		this.setVisible(true);
+		
+		focusGrid();
 	}
 
 	/**
@@ -86,26 +86,12 @@ public class FEFrame extends JFrame {
 		}
 	}
 
-	private static void hideTextbox() {
+	public static void hideTextbox() {
 		textPanel.setVisible(false);
 	}
-
-	// TODO: Change this to a better listener than "any key"
-	private static class TextboxListener implements KeyListener {
-
-		@Override
-		public void keyPressed(KeyEvent arg0) {
-		}
-
-		@Override
-		public void keyReleased(KeyEvent arg0) {
-			// if this method call is false, there is no more text to display
-			if (!textPanel.advanceText())
-				hideTextbox(); // thread safe because we are on EDT
-		}
-
-		@Override
-		public void keyTyped(KeyEvent arg0) {
-		}
+	
+	public static void focusGrid() {
+		mapPanel.requestFocusInWindow();
 	}
+	
 }

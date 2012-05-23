@@ -14,7 +14,7 @@ public class Animator implements Iterable<Drawable> {
 		sprites = new HashMap<UUID, Drawable>();
 	}
 	
-	public void addSprite(Sprite sprite) {
+	public void addDrawable(Drawable sprite) {
 		sprites.put(sprite.getUUID(), sprite);
 	}
 	

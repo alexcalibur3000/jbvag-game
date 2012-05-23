@@ -1,7 +1,10 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +50,8 @@ public class TextboxPanel extends JPanel {
 		box = new TextContainer();
 		box.setBounds(0, 0, WIDTH, HEIGHT);
 		this.add(box);
+		
+		this.addKeyListener(new TextboxListener());
 	}
 
 	/**
@@ -92,6 +97,8 @@ public class TextboxPanel extends JPanel {
 			this.setLineWrap(true);
 			this.setWrapStyleWord(true);
 			this.setOpaque(false);
+			this.setEnabled(false);
+			this.setDisabledTextColor(Color.BLACK);
 
 			dummyArea = new JTextArea();
 			dummyArea.setLineWrap(true);
@@ -191,6 +198,25 @@ public class TextboxPanel extends JPanel {
 				}
 				return true;
 			}
+		}
+	}
+	
+	private class TextboxListener implements KeyListener {
+
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// if this method call is false, there is no more text to display
+			if (!advanceText())
+				FEFrame.hideTextbox(); // thread safe because we are on EDT
+			FEFrame.focusGrid();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
 		}
 	}
 
