@@ -1,9 +1,10 @@
 package view;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
@@ -27,10 +27,12 @@ public class TextboxPanel extends JPanel {
 
 	public static final String FILENAME = "Resources" + StartGame.SEPARATOR
 			+ "textpanel_background.png";
+	
+	private static final int MAX_ROWS = 3; // TODO: Decide on max number of rows
 
 	private BufferedImage bgImage;
 	private final TextContainer box;
-	
+
 	private final int WIDTH;
 	private final int HEIGHT;
 
@@ -48,19 +50,13 @@ public class TextboxPanel extends JPanel {
 		box = new TextContainer();
 		box.setBounds(0, 0, WIDTH, HEIGHT);
 		this.add(box);
+		
+		this.addKeyListener(new TextboxListener());
 	}
 
-//	@Override
-//	public void paintComponent(Graphics g) {
-//		super.paintComponent(g);
-//		Graphics2D g2 = (Graphics2D) g;
-//		g2.drawImage(bgImage, 0, 0, null);
-//	}
-
 	/**
-	 * Sets the text that the character is saying. Should, but does not yet, do
-	 * word wrap and everything behind the scenes without you having to worry
-	 * about it
+	 * Sets the text that the character is saying. Does word wrap and everything
+	 * behind the scenes without you having to worry about it
 	 * 
 	 * @param text
 	 *            The full text the character is going to say. It will be split
@@ -69,114 +65,158 @@ public class TextboxPanel extends JPanel {
 	public void setText(String text) {
 		box.setText(text);
 	}
-	
+
+	/**
+	 * Call this after setting the text in order to advance it.
+	 * 
+	 * @return true if there is more text, false if there is not
+	 */
 	public boolean advanceText() {
 		return box.advanceText();
 	}
-	
+
 	private class TextContainer extends JTextArea {
-		
+
 		/**
 		 * Useless
 		 */
 		private static final long serialVersionUID = 1L;
-		
+
 		private final JTextArea dummyArea;
 		private final Queue<String> textQueue;
-		
-	    private final int fontHeight;
-		
+
+		private final int fontHeight;
+
 		public TextContainer() {
-			
+
 			textQueue = new LinkedList<String>();
-			
+
 			fontHeight = getRowHeight();
-			
+
 			this.setEditable(false);
 			this.setLineWrap(true);
 			this.setWrapStyleWord(true);
 			this.setOpaque(false);
-			
+			this.setEnabled(false);
+			this.setDisabledTextColor(Color.BLACK);
+
 			dummyArea = new JTextArea();
 			dummyArea.setLineWrap(true);
 			dummyArea.setWrapStyleWord(true);
-			dummyArea.setBounds(0, 0, TextboxPanel.this.WIDTH, TextboxPanel.this.HEIGHT);
+			dummyArea.setBounds(0, 0, TextboxPanel.this.WIDTH,
+					TextboxPanel.this.HEIGHT);
 		}
-		
+
 		@Override
 		public void paintComponent(Graphics g) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.drawImage(bgImage, 0, 0, null);
 			super.paintComponent(g);
 		}
-		
+
+		/**
+		 * Returns the number of lines in the passed in area (always dummy area
+		 * at the moment). It uses the font size of THIS area though, so if the
+		 * font size changes, make sure to change the font of the dummy area as
+		 * well.
+		 * 
+		 * @param txtComp
+		 *            The JTextArea you are trying to count the lines in
+		 * @return How many lines there are
+		 */
 		private int getLineCountAsSeen(JTextComponent txtComp) {
-		    int lineCount;
-		    try {
-		    	int height = txtComp.modelToView(txtComp.getDocument().getEndPosition().getOffset() - 1).y;
-		    	lineCount = height / fontHeight + 1;
-		    } catch (Exception e) { 
-		    	lineCount = 0;
-		    }      
-		    return lineCount;
+			int lineCount;
+			try {
+				int height = txtComp.modelToView(txtComp.getDocument()
+						.getEndPosition().getOffset() - 1).y;
+				lineCount = height / fontHeight + 1;
+			} catch (Exception e) {
+				lineCount = 0;
+			}
+			return lineCount;
 		}
-		
+
+		/**
+		 * Call initially when you are trying to display a message. Sets the
+		 * text, breaks it up, etc. Call once, from there, the actionlistener in
+		 * the FEFrame should take care of it by calling advanceText
+		 */
 		@Override
 		public void setText(String s) {
 			textQueue.add(s);
 			breakAndSetText();
 		}
-		
+
 		/**
-		 * Make sure you actually set the text first.
+		 * Will advance the text. Make sure you set the text first.
+		 * 
+		 * @return true if there is more text, false if there is not
 		 */
 		public boolean advanceText() {
 			return breakAndSetText();
 		}
-		
+
+		/**
+		 * Will break up the text in the queue to be the appropriate length and
+		 * fix the queue up so that subsequent calls on this will work
+		 * correctly. This method also sets the text, so calling this will
+		 * visibly break the text into pieces and display it
+		 * 
+		 * @return true if there is more text, false if there is not
+		 */
 		private boolean breakAndSetText() {
-			if(textQueue.isEmpty())
+			if (textQueue.isEmpty())
 				return false;
 			else {
 				String s = textQueue.poll().trim();
 				dummyArea.setText("");
 				int acceptableEndOffset = 0;
 				int i;
-				for(i = 0; i < s.length(); i++) {
+				for (i = 0; i < s.length(); i++) {
 					char c = s.charAt(i);
 					if (c == ' ')
 						acceptableEndOffset = i;
 					dummyArea.append("" + c);
-					if(getLineCountAsSeen(dummyArea) > 3)
+					if (getLineCountAsSeen(dummyArea) > MAX_ROWS)
 						break;
 				}
-				if(i == s.length())
+				if (i == s.length())
 					acceptableEndOffset = i;
-				System.out.println(s.substring(0, acceptableEndOffset));
+				// debug println
+				// System.out.println(s.substring(0, acceptableEndOffset));
 				super.setText(s.substring(0, acceptableEndOffset));
-				
-				if(textQueue.isEmpty()) {
-					if(acceptableEndOffset != s.length())
-						textQueue.add(s.substring(acceptableEndOffset, s.length()));
-				}
-				else {
-					if(acceptableEndOffset != s.length())
-						textQueue.add(s.substring(acceptableEndOffset, s.length()) + textQueue.poll());
-				}
-				
 
+				if (textQueue.isEmpty()) {
+					if (acceptableEndOffset != s.length())
+						textQueue.add(s.substring(acceptableEndOffset,
+								s.length()));
+				} else {
+					if (acceptableEndOffset != s.length())
+						textQueue.add(s.substring(acceptableEndOffset,
+								s.length())
+								+ textQueue.poll());
+				}
 				return true;
-//				// TODO: REMOVE
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//				breakAndSetText();
-				
-				
-				
 			}
+		}
+	}
+	
+	private class TextboxListener implements KeyListener {
+
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// if this method call is false, there is no more text to display
+			if (!advanceText())
+				FEFrame.hideTextbox(); // thread safe because we are on EDT
+			FEFrame.focusGrid();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
 		}
 	}
 

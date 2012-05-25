@@ -4,6 +4,8 @@ import view.FEFrame;
 
 public class StartGame {
 
+	// used in various places where files are lodaed. Couldn't really think of a
+	// better place for it atm, could be moved.
 	public static final String SEPARATOR = System.getProperty("file.separator");
 
 	// args are unused
