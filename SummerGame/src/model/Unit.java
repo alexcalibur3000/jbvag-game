@@ -1,3 +1,4 @@
+package model;
 import main.StartGame;
 import view.Sprite;
 
@@ -17,7 +18,7 @@ public abstract class Unit {
 	 * Every unit has a sprite, and I have added a constructor such that if you don't assign a sprite yourself, then it will be assigned the default sprite
 	 */
 	private Sprite sprite;
-
+	
 	public Unit() {
 		this(new Sprite("Resources" + StartGame.SEPARATOR + "defaultSprite.gif"));
 	}

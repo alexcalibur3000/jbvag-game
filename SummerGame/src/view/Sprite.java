@@ -20,8 +20,6 @@ public class Sprite extends Drawable {
 	protected int gifLength;
 	
 	protected int index;
-	private int row;
-	private int col;
 
 	protected Sprite() {
 		index = 0;
@@ -95,25 +93,5 @@ public class Sprite extends Drawable {
 	public BufferedImage getCurrentImage() {
 		return theImages.get(index);
 	}
-
-	@Override
-	public int getRow() {
-		return row;
-	}
-
-	@Override
-	public int getCol() {
-		return col;
-	}
-
-	@Override
-	public void setRow(int row) {
-		this.row = row;
-	}
-
-	@Override
-	public void setCol(int col) {
-		this.col = col;
-	}
-
+	
 }

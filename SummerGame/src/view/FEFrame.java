@@ -1,17 +1,14 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import model.Andrew;
 
 public class FEFrame extends JFrame {
 
@@ -37,31 +34,31 @@ public class FEFrame extends JFrame {
 	 * dialogs, battle, and etc
 	 */
 	public FEFrame() {
-		this.getContentPane().setPreferredSize(new Dimension(900, 700)); // TODO: Decide on a
-														// size
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+		lPane.setPreferredSize(new Dimension(900, 700));
+		
 		// The dimensions of the content pane on windows is 894x672 with the
 		// 900x700 window size
 		mapPanel.setBounds(0, 0, 900, 700);
 		battlePanel.setBounds(100, 150, 700, 400);
 		textPanel.setBounds(0, 550, 900, 150);
 
-		mapPanel.setBackground(Color.BLUE);
+		//mapPanel.setBackground(Color.BLUE);
+		mapPanel.addForegroundDrawable(new Andrew());
 		battlePanel.setBackground(Color.RED);
 		textPanel.setVisible(false);
-		
 
 		lPane.add(mapPanel, new Integer(0));
 		lPane.add(battlePanel, new Integer(1));
 		lPane.add(textPanel, new Integer(2));
 
-		this.add(lPane);
-		this.setLayeredPane(lPane);
+		this.setContentPane(lPane);
 		this.pack();
 		this.setVisible(true);
 		
+		mapPanel.startAnimation();
 		focusGrid();
 	}
 

@@ -37,7 +37,7 @@ public class Animator implements Iterable<Drawable> {
 	
 	public void drawAll(Graphics g) {
 		for(Drawable d : this) {
-			// TODO: insert drawing code here
+			g.drawImage(d.getCurrentImage(), d.getCol() * GridPanel.GRID_SIZE, d.getRow() * GridPanel.GRID_SIZE, null);
 		}
 	}
 }

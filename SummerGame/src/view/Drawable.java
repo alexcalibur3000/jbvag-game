@@ -6,6 +6,8 @@ import java.util.UUID;
 public abstract class Drawable {
 	
 	private final UUID uuid;
+	protected int row;
+	protected int col;
 	
 	public Drawable() {
 		this.uuid = UUID.randomUUID();
@@ -13,13 +15,21 @@ public abstract class Drawable {
 	
 	public abstract BufferedImage getCurrentImage();
 	
-	public abstract int getRow();
+	public int getRow() {
+		return row;
+	}
 	
-	public abstract int getCol();
+	public int getCol() {
+		return col;
+	}
 	
-	public abstract void setRow(int row);
+	public void setRow(int row) {
+		this.row = row;
+	}
 	
-	public abstract void setCol(int col);
+	public void setCol(int col) {
+		this.col = col;
+	}
 	
 	public abstract void advanceImage();
 	
