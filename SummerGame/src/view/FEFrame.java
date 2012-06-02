@@ -5,10 +5,10 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import model.Andrew;
+import model.BattleDescriptor;
 
 public class FEFrame extends JFrame {
 
@@ -19,12 +19,16 @@ public class FEFrame extends JFrame {
 
 	// instance variables
 	private static final JLayeredPane lPane = new JLayeredPane();
-	private static final GridPanel mapPanel = new GridPanel(); // TODO: This should be
-															// a custom JPanel
-															// later
-	private static final JPanel battlePanel = new JPanel(); // TODO: This should
-															// be a custom
-															// JPanel later
+	private static final GridPanel mapPanel = new GridPanel(); // TODO: This
+																// should be
+																// a custom
+																// JPanel
+																// later
+	private static final BattlePanel battlePanel = new BattlePanel(); // TODO:
+																		// This
+																		// should
+	// be a custom
+	// JPanel later
 	private static final TextboxPanel textPanel = new TextboxPanel(900, 150);
 
 	/**
@@ -38,16 +42,17 @@ public class FEFrame extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		lPane.setPreferredSize(new Dimension(900, 700));
-		
+
 		// The dimensions of the content pane on windows is 894x672 with the
 		// 900x700 window size
 		mapPanel.setBounds(0, 0, 900, 700);
 		battlePanel.setBounds(100, 150, 700, 400);
 		textPanel.setBounds(0, 550, 900, 150);
 
-		//mapPanel.setBackground(Color.BLUE);
+		// mapPanel.setBackground(Color.BLUE);
 		mapPanel.addForegroundDrawable(new Andrew());
 		battlePanel.setBackground(Color.RED);
+		battlePanel.setVisible(false);
 		textPanel.setVisible(false);
 
 		lPane.add(mapPanel, new Integer(0));
@@ -57,7 +62,7 @@ public class FEFrame extends JFrame {
 		this.setContentPane(lPane);
 		this.pack();
 		this.setVisible(true);
-		
+
 		mapPanel.startAnimation();
 		focusGrid();
 	}
@@ -80,15 +85,68 @@ public class FEFrame extends JFrame {
 					textPanel.requestFocusInWindow();
 				}
 			});
+		} else {
+			textPanel.setText(message);
+			textPanel.setVisible(true);
+			textPanel.requestFocusInWindow();
 		}
 	}
 
 	public static void hideTextbox() {
-		textPanel.setVisible(false);
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					textPanel.setVisible(false);
+				}
+			});
+		} else {
+			textPanel.setVisible(false);
+		}
 	}
-	
+
 	public static void focusGrid() {
-		mapPanel.requestFocusInWindow();
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					mapPanel.requestFocusInWindow();
+				}
+			});
+		} else {
+			mapPanel.requestFocusInWindow();
+		}
 	}
-	
+
+	public static void showBattle(BattleDescriptor descriptor) {
+		battlePanel.setBattleDescriptor(descriptor);
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					battlePanel.setVisible(true);
+					battlePanel.requestFocusInWindow();
+					battlePanel.startBattle();
+				}
+			});
+		} else {
+			battlePanel.setVisible(true);
+			battlePanel.requestFocusInWindow();
+			battlePanel.startBattle();
+		}
+	}
+
+	public static void hideBattle() {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					battlePanel.setVisible(false);
+				}
+			});
+		} else {
+			battlePanel.setVisible(false);
+		}
+	}
+
 }

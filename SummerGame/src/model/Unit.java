@@ -1,6 +1,7 @@
 package model;
 import main.StartGame;
 import view.Sprite;
+import view.StaticSprite;
 
 public abstract class Unit {
 
@@ -18,17 +19,23 @@ public abstract class Unit {
 	 * Every unit has a sprite, and I have added a constructor such that if you don't assign a sprite yourself, then it will be assigned the default sprite
 	 */
 	private Sprite sprite;
+	private Sprite battleSprite;
 	
 	public Unit() {
-		this(new Sprite("Resources" + StartGame.SEPARATOR + "defaultSprite.gif"));
+		this(new Sprite("Resources" + StartGame.SEPARATOR + "defaultSprite.gif"), new StaticSprite("Resources" + StartGame.SEPARATOR + "defaultBattleSprite.jpg"));
 	}
 
-	public Unit(Sprite sprite) {
+	public Unit(Sprite sprite, Sprite battleSprite) {
 		this.sprite = sprite;
+		this.battleSprite = battleSprite;
 	}
 	
 	public Sprite getSprite() {
 		return sprite;
+	}
+	
+	public Sprite getBattleSprite() {
+		return battleSprite;
 	}
 
 	/*------------------------------------------------------------------

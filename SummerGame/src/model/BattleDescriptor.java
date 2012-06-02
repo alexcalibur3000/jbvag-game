@@ -1,12 +1,16 @@
 package model;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 public class BattleDescriptor {
 
-	private Unit unitOne;
-	private Unit unitTwo;
-	private Stack<Action> actionStack;
+	private final Unit unitOne;
+	private final Unit unitTwo;
+	private final Queue<Action> actionQueue;
+	private final int unitOneStartHealth;
+	private final int unitTwoStartHealth;
 
 	/**
 	 * Remember the order you pass these in, it is important for the rest of the
@@ -17,30 +21,40 @@ public class BattleDescriptor {
 	 * @param unitTwo
 	 *            The unit on the right
 	 */
-	public BattleDescriptor(Unit unitOne, Unit unitTwo) {
+	public BattleDescriptor(Unit unitOne, Unit unitTwo, int unitOneStartHealth,
+			int unitTwoStartHealth) {
+
 		this.unitOne = unitOne;
 		this.unitTwo = unitTwo;
-		actionStack = new Stack<Action>();
+		actionQueue = new LinkedList<Action>();
+		this.unitOneStartHealth = unitOneStartHealth;
+		this.unitTwoStartHealth = unitTwoStartHealth;
+		
+		actionQueue.add(new Action(BattleEvent.WAIT, -1));
 	}
 
+	/**
+	 * This method means that unit one attacks unit two
+	 * 
+	 * @param damage
+	 *            The amount of damage done to unit two
+	 */
 	public void registerAttackUnitOne(int damage) {
-		actionStack.add(new Action(BattleEvent.LEFTATTACK, damage));
+		actionQueue.add(new Action(BattleEvent.LEFTATTACK, damage));
 	}
 
+	/**
+	 * This method means that unit two attacks unit one
+	 * 
+	 * @param damage
+	 *            The amount of damage done to unit one
+	 */
 	public void registerAttackUnitTwo(int damage) {
-		actionStack.add(new Action(BattleEvent.RIGHTATTACK, damage));
-	}
-
-	public void registerDeathUnitOne() {
-		actionStack.add(new Action(BattleEvent.LEFTDEATH, -1));
-	}
-
-	public void registerDeathUnitTwo() {
-		actionStack.add(new Action(BattleEvent.RIGHTDEATH, -1));
+		actionQueue.add(new Action(BattleEvent.RIGHTATTACK, damage));
 	}
 
 	public void registerEndOfBattle() {
-		actionStack.add(new Action(BattleEvent.END, -1));
+		actionQueue.add(new Action(BattleEvent.END, -1));
 	}
 
 	public Unit getUnitOne() {
@@ -49,6 +63,18 @@ public class BattleDescriptor {
 
 	public Unit getUnitTwo() {
 		return unitTwo;
+	}
+
+	public int getUnitOneStartHealth() {
+		return unitOneStartHealth;
+	}
+
+	public int getUnitTwoStartHealth() {
+		return unitTwoStartHealth;
+	}
+
+	public Queue<Action> getActionStack() {
+		return actionQueue;
 	}
 
 	public class Action {
@@ -64,7 +90,7 @@ public class BattleDescriptor {
 	}
 
 	public enum BattleEvent {
-		LEFTATTACK, RIGHTATTACK, LEFTDEATH, RIGHTDEATH, END;
+		WAIT, LEFTATTACK, RIGHTATTACK, END;
 	}
 
 }
