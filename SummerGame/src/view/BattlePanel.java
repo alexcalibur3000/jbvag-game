@@ -30,7 +30,7 @@ public class BattlePanel extends JPanel {
 
 	public void setBattleDescriptor(BattleDescriptor descriptor) {
 		this.descriptor = descriptor;
-		actionQueue = descriptor.getActionStack();
+		actionQueue = descriptor.getActionQueue();
 		leftHealth = descriptor.getUnitOneStartHealth();
 		rightHealth = descriptor.getUnitTwoStartHealth();
 	}

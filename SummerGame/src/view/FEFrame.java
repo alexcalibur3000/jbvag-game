@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
-import model.Andrew;
 import model.BattleDescriptor;
 
 public class FEFrame extends JFrame {
@@ -50,7 +49,7 @@ public class FEFrame extends JFrame {
 		textPanel.setBounds(0, 550, 900, 150);
 
 		// mapPanel.setBackground(Color.BLUE);
-		mapPanel.addForegroundDrawable(new Andrew());
+	//	mapPanel.addForegroundDrawable(new Andrew());
 		battlePanel.setBackground(Color.RED);
 		battlePanel.setVisible(false);
 		textPanel.setVisible(false);

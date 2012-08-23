@@ -1,28 +1,41 @@
 package model;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
 import main.StartGame;
 import view.Sprite;
 import view.StaticSprite;
 
-public abstract class Unit {
+public class Unit {
 
-	// Unit Stats
-	String name;
-	int Str;
-	int Agi;
-	int Int;
-	int Lvl;
-	int HPMax = Str * 2;
-	int HP;
-	int Move;
+	@XmlAttribute
+	protected String name;
+	@XmlAttribute
+	protected int str;
+	@XmlAttribute
+	protected int def;
+	@XmlAttribute
+	protected int spd;
+	@XmlAttribute
+	protected int health;
+	@XmlAttribute
+	protected int range;
+	@XmlElement
+	protected Location loc;
+	@XmlAttribute
+	protected Team team;
+	@XmlAttribute
+	protected int moveDist;
 
-	/*------------------------------------------------------------------
-	 * Every unit has a sprite, and I have added a constructor such that if you don't assign a sprite yourself, then it will be assigned the default sprite
-	 */
 	private Sprite sprite;
 	private Sprite battleSprite;
-	
+
 	public Unit() {
-		this(new Sprite("Resources" + StartGame.SEPARATOR + "defaultSprite.gif"), new StaticSprite("Resources" + StartGame.SEPARATOR + "defaultBattleSprite.jpg"));
+		this(
+				new Sprite("Resources" + StartGame.SEPARATOR
+						+ "defaultSprite.gif"), new StaticSprite("Resources"
+						+ StartGame.SEPARATOR + "defaultBattleSprite.jpg"));
 	}
 
 	public Unit(Sprite sprite, Sprite battleSprite) {
@@ -30,26 +43,75 @@ public abstract class Unit {
 		this.battleSprite = battleSprite;
 	}
 	
+	public Unit(String name, int str, int def, int spd, int health, Location loc, Team team, int moveDist) {
+		this();
+		this.name = name;
+		this.str = str;
+		this.def = def;
+		this.spd = spd;
+		this.health = health;
+		this.loc = loc;
+		this.team = team;
+		this.moveDist = moveDist;
+	}
+
 	public Sprite getSprite() {
 		return sprite;
 	}
-	
+
 	public Sprite getBattleSprite() {
 		return battleSprite;
 	}
-
-	/*------------------------------------------------------------------
-	 * End Jorge block
-	 */
-
-	public abstract int attack(); // All units should have attacks, based off of
-									// different modifiers
-
-	public abstract int numAttacks(); // All units will be able to attack a
-										// certain amount in a given turn
-
-	public void HPGainLoss(int Gain) {
-		// If gain is negative, the unit will be hurt instead.
-		this.HP += Gain;
+	
+	public int getHealth() {
+		return health;
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int getStrength() {
+		return str;
+	}
+	
+	public int getSpeed() {
+		return spd;
+	}
+	
+	public Location getLocation() {
+		return loc;
+	}
+
+	public void setLocation(Location loc) {
+		this.loc = loc;
+	}
+
+	/**
+	 * Deal damage to the other unit. Health cannot go below 0. Damage dealt is
+	 * strength - otherUnit.defense
+	 * 
+	 * @param toAttack
+	 *            The unit you want to do damage to
+	 */
+	public int attack(Unit toAttack) {
+		int startHealth = toAttack.health;
+		toAttack.health -= str - toAttack.def;
+		if (toAttack.health < 0)
+			toAttack.health = 0;
+		return startHealth - toAttack.health;
+	}
+	
+	public BattleDescriptor battle(Unit toAttack, boolean canRetaliate) {
+		BattleDescriptor bd = new BattleDescriptor(this, toAttack, this.health, toAttack.health);
+		bd.registerAttackUnitOne(this.attack(toAttack));
+		if(canRetaliate)
+			bd.registerAttackUnitTwo(toAttack.attack(this));
+		if(this.spd > 1.5 * toAttack.spd)
+			bd.registerAttackUnitOne(this.attack(toAttack));
+		else if(canRetaliate && toAttack.spd > 1.5 * this.spd)
+			bd.registerAttackUnitTwo(toAttack.attack(this));
+		return bd;
+	}
+
 }

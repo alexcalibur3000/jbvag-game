@@ -73,7 +73,7 @@ public class BattleDescriptor {
 		return unitTwoStartHealth;
 	}
 
-	public Queue<Action> getActionStack() {
+	public Queue<Action> getActionQueue() {
 		return actionQueue;
 	}
 
